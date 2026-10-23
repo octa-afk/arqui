@@ -1,0 +1,1011 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{mdframed}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{babel}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\geometry{margin=2.5cm}
+
+% ── Paleta de colores ─────────────────────────────────────────────────────────
+\definecolor{teal}    {RGB}{0,  110, 110}
+\definecolor{tealdark}{RGB}{0,   75,  75}
+\definecolor{amber}   {RGB}{180, 100,  0}
+\definecolor{green}   {RGB}{0,  120,  40}
+\definecolor{steelblue}{RGB}{50,  90, 160}
+\definecolor{codered} {RGB}{160,  20,  20}
+\definecolor{backgray}{RGB}{248, 248, 248}
+\definecolor{codegray}{RGB}{100, 100, 100}
+
+% ── Estilo de código ──────────────────────────────────────────────────────────
+\lstset{
+  basicstyle    = \ttfamily\small,
+  keywordstyle  = \color{steelblue}\bfseries,
+  commentstyle  = \color{green}\itshape,
+  stringstyle   = \color{codered},
+  numberstyle   = \tiny\color{codegray},
+  frame         = single,
+  backgroundcolor = \color{backgray},
+  breaklines    = true,
+  numbers       = left,
+  numbersep     = 5pt,
+  showstringspaces = false,
+  tabsize       = 4,
+  captionpos    = b
+}
+
+% ── Header/footer ────────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textit{Memoria Caché — Práctica con RIPES}}
+\fancyhead[R]{\textit{Simulación y análisis de hardware}}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{14pt}
+
+% ── Entornos ─────────────────────────────────────────────────────────────────
+\newmdenv[
+  linecolor=teal, linewidth=2pt,
+  frametitle={Ejercicio}, frametitlefont=\bfseries\color{teal},
+  backgroundcolor=white, innerleftmargin=10pt, innerrightmargin=10pt,
+  nobreak=true
+]{ejercicio}
+
+\newmdenv[
+  linecolor=steelblue, linewidth=1.5pt,
+  frametitle={Configuración RIPES}, frametitlefont=\bfseries\color{steelblue},
+  backgroundcolor=backgray, innerleftmargin=10pt, innerrightmargin=10pt
+]{ripes}
+
+\newmdenv[
+  linecolor=green, linewidth=1.5pt,
+  frametitle={Conclusión}, frametitlefont=\bfseries\color{green},
+  backgroundcolor=white, innerleftmargin=10pt, innerrightmargin=10pt
+]{conclusion}
+
+\newmdenv[
+  linecolor=amber, linewidth=1.5pt,
+  frametitle={Atención}, frametitlefont=\bfseries\color{amber},
+  backgroundcolor=white, innerleftmargin=10pt, innerrightmargin=10pt
+]{atencion}
+
+\newmdenv[
+  linecolor=codegray, linewidth=1pt,
+  frametitle={Referencia rápida}, frametitlefont=\bfseries\color{codegray},
+  backgroundcolor=backgray, innerleftmargin=10pt, innerrightmargin=10pt
+]{referencia}
+
+\newmdenv[
+  linecolor=teal, linewidth=2pt,
+  frametitle={Actividad}, frametitlefont=\bfseries\color{teal},
+  backgroundcolor=white, innerleftmargin=10pt, innerrightmargin=10pt,
+  nobreak=true
+]{actividad}
+
+\newmdenv[
+  linecolor=steelblue, linewidth=1pt,
+  frametitle={Nota}, frametitlefont=\bfseries\color{steelblue},
+  backgroundcolor=backgray, innerleftmargin=10pt, innerrightmargin=10pt
+]{nota}
+
+\newmdenv[
+  linecolor=green, linewidth=1.5pt,
+  frametitle={Checkpoint}, frametitlefont=\bfseries\color{green},
+  backgroundcolor=white, innerleftmargin=10pt, innerrightmargin=10pt
+]{checkpoint}
+
+% ── Títulos ───────────────────────────────────────────────────────────────────
+\titleformat{\section}[block]{\large\bfseries\color{tealdark}}{}{0em}{\thesection\quad}
+\titleformat{\subsection}[block]{\normalsize\bfseries\color{teal}}{}{0em}{\thesubsection\quad}
+
+% ── Comandos auxiliares ───────────────────────────────────────────────────────
+\newcommand{\param}[1]{\textbf{\textcolor{teal}{#1}}}
+\newcommand{\ripesbtn}[1]{\texttt{#1}}
+\newcommand{\archivo}[1]{\texttt{\textbf{#1}}}
+
+% ── Contadores auto-numerados ─────────────────────────────────────────────────
+\newcounter{actnum}
+\newcommand{\actividadsec}[1]{%
+  \stepcounter{actnum}%
+  \subsection{Actividad \theactnum\ — #1}%
+}
+\newcounter{ejnum}
+\newcommand{\ejerciciosec}[1]{%
+  \stepcounter{ejnum}%
+  \subsection{Ejercicio \theejnum\ — #1}%
+}
+
+% =============================================================================
+\begin{document}
+% =============================================================================
+
+\begin{center}
+    {\LARGE\bfseries Memoria Caché: práctica con RIPES}\\[0.4cm]
+    {\large Simulación de parámetros de caché y análisis de costo de hardware}\\[0.2cm]
+    \rule{\textwidth}{1pt}
+\end{center}
+
+\vspace{0.3cm}
+\begin{tabular}{ll}
+    \textbf{Simulador:}   & RIPES v2.2.x — modo \texttt{Single-Cycle RV32IM} \\
+    \textbf{Archivos:}    & carpeta \texttt{asm/} del repositorio \\
+    \textbf{Compilador:}  & integrado en RIPES — pegar código C en la pestaña \texttt{C} del editor \\
+\end{tabular}
+\vspace{0.2cm}
+\rule{\textwidth}{0.5pt}
+
+
+\section*{Configuración del compilador C en RIPES}
+% ─────────────────────────────────────────────────────────────────────────────
+
+RIPES incluye soporte para compilar código C directamente desde el editor.
+Antes del primer uso, configurar el compilador una sola vez:
+
+\begin{ripes}
+    \textbf{Opción A — Script automático} (recomendado, ejecutar una sola vez):
+\begin{lstlisting}[language=bash, numbers=none]
+cd Ripes/
+chmod +x setup_compiler.sh && ./setup_compiler.sh
+\end{lstlisting}
+    Reiniciar RIPES después de ejecutar el script.
+
+    \vspace{0.4cm}
+    \textbf{Opción B — Configuración manual desde la GUI de RIPES:}
+    \begin{enumerate}
+        \item Ir a \ripesbtn{Edit $\to$ Settings} (o ícono de engranaje).
+        \item Seleccionar la pestaña \ripesbtn{Compiler}.
+        \item Completar los campos:
+        \begin{center}
+        \renewcommand{\arraystretch}{1.5}
+        \begin{tabular}{ll}
+            \textbf{Compiler path:}  & \texttt{/usr/bin/riscv64-unknown-elf-gcc} \\
+            \textbf{Compiler args:}  & \texttt{-O1} \\
+            \textbf{Linker args:}    & \texttt{-nostdlib -nostartfiles} \\
+        \end{tabular}
+        \end{center}
+        \item Hacer clic en \ripesbtn{OK} y reiniciar RIPES.
+    \end{enumerate}
+
+    \vspace{0.2cm}
+    \textbf{Por qué estos valores:}
+    \begin{itemize}
+        \item \texttt{riscv64-unknown-elf-gcc} es el único compilador del sistema
+              que tiene soporte para \texttt{rv32im/ilp32} (multilib completo).
+              RIPES agrega \texttt{-march=rv32im -mabi=ilp32} automáticamente
+              según el procesador seleccionado; no es necesario repetirlos en Compiler args.
+        \item \texttt{-nostdlib -nostartfiles} evita que el linker busque
+              la libc de newlib (no instalada para rv32).
+              RIPES no la necesita: arranca directamente desde \texttt{main()}.
+    \end{itemize}
+\end{ripes}
+
+\section*{Objetivos}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{itemize}
+    \item Medir en RIPES cómo cambia el miss rate al variar individualmente
+          el \textbf{tamaño total}, el tamaño de línea y la
+          asociatividad de la caché.
+    \item Relacionar los patrones de acceso del código (C y assembly) con
+          los miss rates observados.
+    \item Calcular el costo de hardware (bits de almacenamiento, comparadores,
+          estado LRU) en función de la asociatividad.
+    \item Encontrar analíticamente la asociatividad que minimiza el AMAT
+          considerando el impacto del hit time en el hardware real.
+\end{itemize}
+
+\begin{referencia}
+    \textbf{Parámetros de la caché y nomenclatura:}
+    \[
+        b = \log_2 B, \quad
+        s = \log_2 S, \quad
+        t = 32 - s - b
+    \]
+    \[
+        \text{AMAT} = t_h + \text{MR} \times t_m
+    \]
+    \begin{tabular}{ll}
+        $B$ = tamaño de bloque (bytes) &
+        $b$ = bits de offset \\
+        $S$ = número de sets &
+        $s$ = bits de índice \\
+        $W$ = asociatividad (vías) &
+        $t$ = bits de tag \\
+        $t_h$ = hit time (ciclos) &
+        $t_m$ = penalidad de miss (ciclos) \\
+    \end{tabular}
+\end{referencia}
+
+\newpage
+
+% =============================================================================
+\section{Parte 0B — Assembly en RIPES: acceso a arreglos}
+% =============================================================================
+
+\begin{nota}
+    \textbf{Archivo:} \archivo{ej\_array.s} — cargar con
+    \ripesbtn{File $\to$ Load assembly file}.
+
+    Implementa \texttt{C[i] = A[i] + B[i]} con paso configurable en assembly RV32IM.
+    El \texttt{STEP} se controla modificando el inmediato de \texttt{li t6, ?}
+    en la etiqueta \texttt{compute:}.
+\end{nota}
+
+\actividadsec{Identificación de accesos a memoria en el assembler}
+
+\begin{actividad}
+    Abrir \archivo{ej\_array.s} y localizar el loop etiquetado \texttt{loop:}.
+    Identificar las instrucciones de acceso a datos (\texttt{lw}/\texttt{sw}):
+
+    \begin{center}
+    \renewcommand{\arraystretch}{1.8}
+    \begin{tabular}{|l|l|c|}
+        \hline
+        \textbf{Acceso} & \textbf{Instrucción en ej\_array.s} & \textbf{Tipo} \\
+        \hline
+        Leer \texttt{A[i]} & \hspace{5cm} & load \\
+        \hline
+        Leer \texttt{B[i]} & & load \\
+        \hline
+        Escribir \texttt{C[i]} & & store \\
+        \hline
+    \end{tabular}
+    \end{center}
+\end{actividad}
+
+\newpage
+\actividadsec{Perfilado con acceso secuencial (STEP = 1)}
+
+\begin{atencion}
+    \textbf{Siempre hacer Reset antes de cada corrida.} Sin Reset, los bloques
+    de corridas anteriores permanecen en caché y contaminan las estadísticas.
+\end{atencion}
+
+\begin{actividad}
+    \textbf{Caché:} L1 Data Cache habilitada, Line size = \textbf{4 words} (16~B), LRU.
+    Verificar que \texttt{li t6, 1} (STEP=1) esté en \archivo{ej\_array.s}.
+
+    \vspace{0.3cm}
+    \begin{center}
+    \renewcommand{\arraystretch}{1.8}
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \textbf{Configuración} & \textbf{Accesos} & \textbf{Hits} & \textbf{Misses} & \textbf{Miss rate} \\
+        \hline
+        Direct-Mapped (Sets=16, Ways=1) & & & & \\
+        \hline
+        2-Way Set Assoc.\ (Sets=8, Ways=2) & & & & \\
+        \hline
+        4-Way Set Assoc.\ (Sets=4, Ways=4) & & & & \\
+        \hline
+    \end{tabular}
+    \end{center}
+
+    \begin{enumerate}
+        \item ¿Qué set tiene mayor actividad en la fase de suma?
+              ¿Qué tags hay cargados en ese set al finalizar?
+        \item ¿En qué configuración los tres arrays (A, B, C) coexisten sin conflicto?
+    \end{enumerate}
+
+    Usando los miss rates medidos, calcular el AMAT
+    ($t_h = 1$~ciclo, $t_m = 100$~ciclos):
+
+    \vspace{0.2cm}
+    \begin{center}
+    \renewcommand{\arraystretch}{1.8}
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+        \textbf{Configuración} & \textbf{MR} & \textbf{AMAT (ciclos)} & \textbf{Factor vs.\ DM} \\
+        \hline
+        Direct-Mapped & & & 1.0$\times$ \\
+        \hline
+        2-Way & & & \\
+        \hline
+        4-Way & & & \\
+        \hline
+    \end{tabular}
+    \end{center}
+\end{actividad}
+
+\begin{checkpoint}
+    En 4-Way con STEP=1: ¿a partir de qué iteración el set del conflicto queda estable?
+    ¿Cuántos misses compulsorios son inevitables sin importar la asociatividad?
+\end{checkpoint}
+\newpage
+\actividadsec{Impacto del stride\protect\footnotemark{} de acceso}
+\footnotetext{\textit{Stride}: distancia (en elementos) entre accesos consecutivos a memoria. Un stride de 1 accede a posiciones contiguas; un stride mayor salta posiciones, reduciendo la localidad espacial.}
+
+\begin{nota}
+    Modificar el stride cambiando \texttt{li t6, ?} en \archivo{ej\_array.s}:
+    \begin{itemize}
+        \item \texttt{li t6, 1} $\to$ STEP=1: 1 miss / 4 accesos con bloque 16~B
+        \item \texttt{li t6, 4} $\to$ STEP=4: 1 miss / acceso (bloque 16~B)
+        \item \texttt{li t6, 8} $\to$ STEP=8: miss garantizado, además salta bloques
+    \end{itemize}
+\end{nota}
+
+\begin{actividad}
+    \textbf{Antes de medir,} calcular teóricamente el miss rate para la config
+    \textbf{4-Way, Sets=4, Line=4 words (16~B)}, con N=64 elementos y 3 arrays:
+
+    \vspace{0.2cm}
+    \begin{center}
+    \renewcommand{\arraystretch}{1.8}
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \textbf{STEP} & \textbf{Accesos totales} & \textbf{Misses esperados} & \textbf{MR teórico} & \textbf{Motivo} \\
+        \hline
+        1 & & & & \\
+        \hline
+        4 & & & & \\
+        \hline
+        8 & & & & \\
+        \hline
+    \end{tabular}
+    \end{center}
+
+    \textbf{Medición en RIPES} (Reset entre cada corrida):
+
+    \vspace{0.2cm}
+    \begin{center}
+    \renewcommand{\arraystretch}{1.8}
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        \textbf{STEP} & \textbf{Accesos} & \textbf{Hits} & \textbf{Misses} &
+        \textbf{MR medido} & \textbf{MR teórico} \\
+        \hline
+        1 & & & & & \\
+        \hline
+        4 & & & & & \\
+        \hline
+        8 & & & & & \\
+        \hline
+    \end{tabular}
+    \end{center}
+
+    \textbf{Variante (STEP=4 fijo, variar tamaño de bloque):}
+
+    \vspace{0.2cm}
+    \begin{center}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \textbf{Corrida} & \textbf{Line size} & \textbf{Sets} & \textbf{Ways} & \textbf{Miss rate} \\
+        \hline
+        A & 1 word (4~B)  & 16 & 4 & \\
+        \hline
+        B & 2 words (8~B) &  8 & 4 & \\
+        \hline
+        C & 4 words (16~B)&  4 & 4 & \\
+        \hline
+        D & 8 words (32~B)&  2 & 4 & \\
+        \hline
+    \end{tabular}
+    \end{center}
+\end{actividad}
+
+\begin{checkpoint}
+    \begin{enumerate}
+        \item ¿A partir de qué STEP el miss rate llega al 100\%?
+        \item Con STEP=4 y bloque 16~B: ¿qué porcentaje de los bytes traídos se usan?
+              ¿Cómo se llama este fenómeno?
+        \item ¿A partir de qué tamaño de bloque el MR baja con STEP=4?
+    \end{enumerate}
+\end{checkpoint}
+
+\newpage
+
+% =============================================================================
+\section{Parte I — Simulación en RIPES: barrido de parámetros de caché}
+% =============================================================================
+
+\begin{ripes}
+    \textbf{Flujo de trabajo en RIPES con código C:}
+    \begin{enumerate}
+        \item Abrir RIPES y seleccionar procesador \ripesbtn{Single-Cycle RV32IM}.
+        \item En el panel izquierdo, hacer clic en la pestaña \ripesbtn{C} del editor.
+              Pegar el código C del ejercicio. RIPES compila y carga automáticamente.
+        \item Para cambiar un parámetro (\texttt{\#define N}, \texttt{\#define STEP}, etc.),
+              editar el valor directamente en el editor C y presionar \ripesbtn{Run} o
+              \ripesbtn{Step}. RIPES recompila al instante.
+        \item En la barra lateral, activar \ripesbtn{Cache} $\to$ \ripesbtn{Data Cache}.
+        \item Ajustar \ripesbtn{Ways}, \ripesbtn{Lines} y \ripesbtn{Words/Line} según
+              cada ejercicio. La capacidad total es:
+              \[ \text{Capacidad} = \text{Ways} \times \text{Lines} \times \text{Words/Line} \times 4\text{ B} \]
+        \item Hacer \textbf{Reset} antes de cada corrida.
+        \item Leer \ripesbtn{Accesses}, \ripesbtn{Hits}, \ripesbtn{Misses} y
+              \ripesbtn{Miss rate} en el panel de caché.
+    \end{enumerate}
+    \textbf{Nota:} los archivos \texttt{.s} de la carpeta \texttt{asm/} se cargan con
+    \ripesbtn{File $\to$ Load assembly file} cuando el ejercicio lo especifique.
+\end{ripes}
+
+\begin{atencion}
+    \textbf{Siempre hacer Reset antes de cada corrida.} Sin Reset, los bloques
+    de corridas anteriores permanecen en caché y contaminan las estadísticas.
+    El estado inicial debe ser caché vacía (\textit{cold start}).
+\end{atencion}
+
+\newpage
+
+\ejerciciosec{Efecto del tamaño total de caché}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\textbf{Concepto:} cuando el working set supera la capacidad de la caché, los
+bloques que ya estuvieron son desalojados antes de reutilizarse (\textit{capacity misses}).
+Al aumentar el tamaño de la caché, llega un punto en que el working set cabe
+completamente y los misses en la segunda pasada desaparecen.
+
+\textbf{Código C:} pegar el siguiente programa en el editor C de RIPES.
+Para cambiar el tamaño del array, modificar \texttt{\#define N} directamente en el editor.
+
+\begin{lstlisting}[language=C, caption={cache\_size\_test.c — pegar en el editor C de RIPES}]
+#define N 128   /* modificar: 32, 64, 128, 256 */
+
+static int A[N];
+
+int main(void)
+{
+    int i, s1 = 0, s2 = 0;
+
+    /* inicializacion: primera escritura a cada elemento */
+    for (i = 0; i < N; i++)
+        A[i] = i + 1;
+
+    /* Primera pasada: misses compulsorios puros */
+    for (i = 0; i < N; i++)
+        s1 += A[i];
+
+    /* Segunda pasada: hits si A cabe en cache, misses de capacidad si no */
+    for (i = 0; i < N; i++)
+        s2 += A[i];
+
+    return (s1 + s2) & 0xFF;
+}
+\end{lstlisting}
+
+\newpage
+\begin{ejercicio}
+    \textbf{Parámetros fijos:} Direct-Mapped (\texttt{Ways=1}),
+    \texttt{Words/Line=4} (bloque 16~B), política LRU.
+
+    Pegar el código con \texttt{N=128}. El working set del array es $128 \times 4 = 512$~B.
+    Variar el tamaño de la caché modificando \ripesbtn{Lines}:
+
+    \vspace{0.3cm}
+    \begin{center}
+    \renewcommand{\arraystretch}{1.8}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{|l|c|c|c|c|c|}
+        \hline
+        \textbf{Configuración} & \textbf{Capacidad} & \textbf{Accesos tot.} &
+        \textbf{Misses} & \textbf{MR (\%)} & \textbf{AMAT} ($t_m{=}100$) \\
+        \hline
+        Ways=1, Lines=4   &  64~B  & & & & \\
+        \hline
+        Ways=1, Lines=8   & 128~B  & & & & \\
+        \hline
+        Ways=1, Lines=16  & 256~B  & & & & \\
+        \hline
+        Ways=1, Lines=32  & 512~B  & & & & \\
+        \hline
+        Ways=1, Lines=64  &   1~KB & & & & \\
+        \hline
+    \end{tabular}}
+    \end{center}
+
+    \vspace{0.2cm}
+    \begin{enumerate}
+        \item ¿En qué configuración el miss rate cae drásticamente? Justificar
+              comparando la capacidad de la caché con el tamaño del working set
+              ($512$~B de datos $+$ código de inicialización).
+        \item ¿Cuántos misses espera en la primera pasada vs.\ la segunda pasada?
+              (Usar el panel \ripesbtn{Step} para separar las dos fases.)
+        \item ¿A qué tipo de miss corresponden los misses de la primera pasada?
+              ¿Y los de la segunda cuando el array no cabe?
+    \end{enumerate}
+\end{ejercicio}
+
+\begin{conclusion}
+    El miss rate cae a su valor mínimo (solo misses compulsorios de la primera pasada)
+    cuando la capacidad de la caché iguala o supera el working set.
+    Duplicar la caché más allá de ese punto no reduce el miss rate.
+\end{conclusion}
+
+\vspace{0.5cm}
+\textbf{Variante:} en el editor C de RIPES, cambiar \texttt{\#define N} a
+32, 64 y 256. RIPES recompila automáticamente. Repetir con la configuración
+\texttt{Lines=16} (256~B) y registrar cómo cambia el miss rate de la segunda pasada.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.8}
+\begin{tabular}{|c|c|c|c|}
+    \hline
+    \textbf{N (elementos)} & \textbf{Working set} & \textbf{¿Cabe en 256~B?} & \textbf{MR 2ª pasada} \\
+    \hline
+    32  & 128~B & & \\
+    \hline
+    64  & 256~B & & \\
+    \hline
+    128 & 512~B & & \\
+    \hline
+    256 & 1024~B & & \\
+    \hline
+\end{tabular}
+\end{center}
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\ejerciciosec{Efecto del tamaño de línea (cache line size)}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\textbf{Concepto:} una línea más grande trae más datos contiguos por miss.
+Si el stride de acceso es menor que el tamaño de línea, los datos traídos
+se usan ($\uparrow$ eficiencia). Si el stride supera el tamaño de línea,
+cada acceso cae en un bloque diferente y el overhead de miss se repite
+sin beneficio.
+
+\textbf{Código C:} pegar en el editor C de RIPES y modificar \texttt{\#define STEP}
+directamente para cada experimento.
+
+\begin{lstlisting}[language=C, caption={stride\_test.c — pegar en el editor C de RIPES}]
+#define N    128   /* elementos por array */
+#define STEP   4   /* stride: cambiar a 1, 4, 8 segun el experimento */
+
+static int A[N], B[N], C[N];
+
+int main(void)
+{
+    int i, suma = 0;
+
+    /* inicializacion secuencial */
+    for (i = 0; i < N; i++) {
+        A[i] = i + 1;
+        B[i] = N - i;
+    }
+
+    /* kernel con stride STEP: C[i] = A[i] + B[i] */
+    for (i = 0; i < N; i += STEP) {
+        C[i] = A[i] + B[i];
+        suma += C[i];
+    }
+
+    return suma & 0xFF;
+}
+\end{lstlisting}
+
+\begin{ejercicio}
+    \textbf{Parámetros fijos:} capacidad total 256~B, \texttt{Ways=4} (4-way),
+    política LRU, \texttt{STEP=4} (stride = 16~bytes entre accesos a cada array).
+
+    Variar \ripesbtn{Words/Line} para cambiar el tamaño de línea.
+
+    \vspace{0.3cm}
+    \begin{center}
+    \renewcommand{\arraystretch}{1.8}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{|l|c|c|c|c|c|}
+        \hline
+        \textbf{Words/Line} & \textbf{Bloque} & \textbf{Lines} (Sets×Ways) &
+        \textbf{Accesos} & \textbf{MR (\%)} & \textbf{AMAT} ($t_m{=}100$) \\
+        \hline
+        $2^0 = 1$ word  &  4~B & $64\times1=$ \phantom{xx} & & & \\
+        \hline
+        $2^1 = 2$ words &  8~B & \phantom{xxx} & & & \\
+        \hline
+        $2^2 = 4$ words & 16~B & \phantom{xxx} & & & \\
+        \hline
+        $2^3 = 8$ words & 32~B & \phantom{xxx} & & & \\
+        \hline
+    \end{tabular}}
+    \end{center}
+
+    \vspace{0.2cm}
+    \begin{enumerate}
+        \item Con \texttt{STEP=4} y bloque de 16~B: el stride en bytes es
+              $4\times4=16$~B. ¿Cuántos elementos del bloque cargado se usan?
+        \item Con bloque de 32~B: el stride (16~B) es menor que el bloque.
+              ¿Cuántos accesos de stride=4 comparten ahora el mismo bloque?
+              ¿Cómo cambia el miss rate?
+        \item ¿Existe un tamaño de línea para el cual el miss rate es mínimo?
+              ¿Podría ocurrir que una línea demasiado grande empeore el miss
+              rate? ¿Bajo qué condición?
+    \end{enumerate}
+\end{ejercicio}
+
+\vspace{0.4cm}
+\textbf{Extensión:} en el editor C de RIPES, cambiar \texttt{\#define STEP} a 1 y a 8.
+Construir la tabla de miss rate para las combinaciones stride × tamaño de línea:
+
+\vspace{0.2cm}
+\begin{center}
+\renewcommand{\arraystretch}{1.8}
+\begin{tabular}{|c|c|c|c|c|}
+    \hline
+    & \multicolumn{4}{c|}{\textbf{Tamaño de línea (Words/Line)}} \\
+    \cline{2-5}
+    \textbf{STEP} & 1 word (4~B) & 2 words (8~B) & 4 words (16~B) & 8 words (32~B) \\
+    \hline
+    1 & & & & \\
+    \hline
+    4 & & & & \\
+    \hline
+    8 & & & & \\
+    \hline
+\end{tabular}
+\end{center}
+
+\begin{conclusion}
+    El miss rate mínimo con stride $S$ se obtiene cuando el bloque contiene al menos
+    $S$ elementos, es decir cuando $B \geq S \times 4$~bytes.
+    Para strides grandes, aumentar el bloque no ayuda si el patrón de acceso
+    nunca reutiliza los datos extra traídos.
+\end{conclusion}
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\ejerciciosec{Efecto de la asociatividad}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\textbf{Concepto:} los \textit{conflict misses} ocurren cuando múltiples bloques
+populares compiten por el mismo set. Al aumentar la asociatividad (más vías por set),
+más bloques conflictivos pueden coexistir. Existe un umbral: cuando $W \geq N_c$
+(número de bloques en conflicto), los conflict misses desaparecen.
+
+\textbf{Archivo:} \archivo{ej\_conflictos.s}
+(4 accesos que mapean al mismo set, repetidos dos veces).
+
+\begin{ejercicio}
+    \textbf{Parámetros fijos:} capacidad 256~B, bloque 16~B (\texttt{Words/Line=4}),
+    política LRU.
+
+    Cargar \archivo{ej\_conflictos.s} y ejecutar con distintas asociatividades.
+    El programa realiza 8 accesos en total: A, B, C, D (primera ronda) y
+    A, B, C, D nuevamente (segunda ronda), donde A/B/C/D están separadas
+    por 256~B (= capacidad total de la caché).
+
+    \vspace{0.3cm}
+    \begin{center}
+    \renewcommand{\arraystretch}{1.8}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{|l|c|c|c|c|c|c|}
+        \hline
+        \textbf{Configuración} & \textbf{Ways} & \textbf{Sets} & \textbf{Accesos} &
+        \textbf{Hits} & \textbf{MR (\%)} & \textbf{AMAT} ($t_m{=}100$) \\
+        \hline
+        Direct-Mapped & 1 & 16 & & & & \\
+        \hline
+        2-Way & 2 & 8 & & & & \\
+        \hline
+        4-Way & 4 & 4 & & & & \\
+        \hline
+        8-Way & 8 & 2 & & & & \\
+        \hline
+    \end{tabular}}
+    \end{center}
+
+    \vspace{0.2cm}
+    \begin{enumerate}
+        \item Simular en pizarra (sin RIPES) el comportamiento de la caché
+              DM y 4-Way con la secuencia A, B, C, D, A, B, C, D.
+              ¿Cuántos misses ocurren en cada caso?
+        \item ¿Por qué 2-Way tiene el mismo miss rate que DM en este programa?
+        \item ¿A partir de qué asociatividad los conflict misses desaparecen?
+              Enunciar la regla general.
+        \item Con 8-Way: ¿el miss rate es menor que con 4-Way?
+              ¿Cuántos misses son inevitables aunque la asociatividad sea infinita?
+    \end{enumerate}
+\end{ejercicio}
+
+\vspace{0.4cm}
+\textbf{Extensión con código C:} pegar el siguiente esqueleto en el editor C de RIPES.
+Cambiar \texttt{\#define K} directamente en el editor para variar el número de bloques
+conflictivos. El programa replica el patrón de \archivo{ej\_conflictos.s} desde C.
+\newpage
+\begin{lstlisting}[language=C, caption={Pegar en editor C de RIPES --- cambiar K = 2, 4, 6, 8}]
+#define CACHE_SIZE  256 /* bytes: ajustar config de RIPES */
+#define BLOCK_SIZE   16 /* bytes */
+#define K             4 /* bloques en conflicto: 2, 4, 6, 8 */
+#define GAP  (CACHE_SIZE / (int)sizeof(int))   /* separacion */
+#define N     4 /* accesos por bloque (1 por word del bloque) */
+
+/* K arrays separados por GAP enteros: todos mapean al mismo set */
+static int banks[K][GAP + N];
+
+int main(void) {
+    int k, i, s = 0;
+    /* inicializar */
+    for (k = 0; k < K; k++)
+        for (i = 0; i < N; i++)
+            banks[k][i] = k * N + i;
+    /* patron conflictivo: dos pasadas */
+    for (int pass = 0; pass < 2; pass++)
+        for (k = 0; k < K; k++)
+            /* acceso al primer elemento de cada banco */
+            s += banks[k][0];   
+    return s & 0xFF;
+}
+\end{lstlisting}
+
+Cambiar \texttt{\#define K} en el editor C de RIPES a 2, 4, 6 y 8 (RIPES recompila
+automáticamente). Registrar el miss rate para DM y 4-Way:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.8}
+\begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{K (bloques conflictivos)} & \textbf{MR — DM} & \textbf{MR — 4-Way} \\
+    \hline
+    2 & & \\
+    \hline
+    4 & & \\
+    \hline
+    6 & & \\
+    \hline
+    8 & & \\
+    \hline
+\end{tabular}
+\end{center}
+
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\ejerciciosec{Acceso a matrices en C: row-major vs.\ col-major}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\textbf{Concepto:} el orden de recorrido de una matriz bidimensional puede
+multiplicar el miss rate por un factor de $N$ (dimensión de la matriz),
+aunque la operación realizada sea exactamente la misma.
+
+\textbf{Código C:} pegar en el editor C de RIPES. Para variar la dimensión,
+cambiar \texttt{\#define N} directamente en el editor.
+
+\begin{lstlisting}[language=C, caption={matrix\_row\_col.c --- pegar en editor C de RIPES}]
+#define N 8   /* dimension de la matriz NxN; cambiar a 16 o 32 */
+
+static int M[N][N];
+
+static void fill(void)
+{
+    int i, j;
+    for (i = 0; i < N; i++)
+        for (j = 0; j < N; j++)
+            M[i][j] = i * N + j + 1;
+}
+
+/* Fila por fila: stride = 4 B (localidad espacial alta) */
+static int row_sum(void)
+{
+    int i, j, s = 0;
+    for (i = 0; i < N; i++)
+        for (j = 0; j < N; j++)
+            s += M[i][j];
+    return s;
+}
+
+/* Columna por columna: stride = N*4 B (localidad espacial baja) */
+static int col_sum(void)
+{
+    int i, j, s = 0;
+    for (j = 0; j < N; j++)
+        for (i = 0; i < N; i++)
+            s += M[i][j];
+    return s;
+}
+
+int main(void)
+{
+    fill();
+    int r = row_sum();
+    int c = col_sum();
+    return r - c;
+}
+\end{lstlisting}
+
+\begin{ejercicio}
+    \textbf{Parámetros fijos:} 256~B, 4-Way, bloque 16~B, LRU.
+    Con \texttt{N=8}: la matriz ocupa $8\times 8\times 4=256$~B exactamente.
+
+    \begin{center}
+    \renewcommand{\arraystretch}{1.8}
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \textbf{Función} & \textbf{Accesos} & \textbf{Misses} & \textbf{MR (\%)} & \textbf{Stride entre accesos} \\
+        \hline
+        \texttt{fill()}     & & & & 4~B (secuencial) \\
+        \hline
+        \texttt{row\_sum()} & & & & 4~B (secuencial) \\
+        \hline
+        \texttt{col\_sum()} & & & & $N\times 4$~B \\
+        \hline
+    \end{tabular}
+    \end{center}
+
+    \begin{enumerate}
+        \item Calcular analíticamente el stride de \texttt{col\_sum()} con \texttt{N=8}:
+              entre dos accesos consecutivos, ¿cuántos bytes se saltan?
+        \item ¿Cuántos elementos del bloque de 16~B cargado en \texttt{col\_sum()}
+              se utilizan efectivamente antes de que el bloque sea desalojado?
+        \item En el editor C de RIPES, cambiar \texttt{\#define N 8} a
+              \texttt{\#define N 16}. La matriz ahora ocupa $16\times16\times4=1024$~B.
+              ¿Cómo cambia el MR de \texttt{row\_sum()}? ¿Por qué?
+    \end{enumerate}
+
+    \vspace{0.3cm}
+    \begin{center}
+    \renewcommand{\arraystretch}{1.8}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \textbf{N} & \textbf{Tamaño matriz} & \textbf{MR row\_sum} & \textbf{MR col\_sum} \\
+        \hline
+        8  & 256~B  & & \\
+        \hline
+        16 & 1024~B & & \\
+        \hline
+        32 & 4096~B & & \\
+        \hline
+    \end{tabular}
+    \end{center}
+\end{ejercicio}
+
+\begin{conclusion}
+    Para \texttt{row\_sum()}, el miss rate permanece bajo independientemente de $N$
+    (acceso secuencial, localidad espacial alta). Para \texttt{col\_sum()},
+    el miss rate depende de cuántos elementos de cada columna caben en caché:
+    cuando $N$ supera el número de líneas disponibles, el MR llega al 100\%.
+\end{conclusion}
+
+\newpage
+
+% =============================================================================
+\section{Parte II — Simulación RTL del hardware de la caché}
+% =============================================================================
+
+Los ejercicios anteriores mostraron que aumentar la asociatividad reduce los
+conflict misses. Esta parte usa \textbf{herramientas de diseño de hardware
+real} para cuantificar ese costo. El flujo es:
+
+\begin{enumerate}
+    \item \textbf{Verilog paramétrico} — \archivo{cache\_comparator.v} y
+          \archivo{plru\_state.v} modelan la lógica del comparador de tag,
+          el MUX de datos y el estado PLRU. El parámetro \texttt{W}
+          controla la asociatividad.
+    \item \textbf{Simulación funcional} con \texttt{iverilog} — verifica que
+          la lógica de hit/miss sea correcta antes de sintetizar.
+    \item \textbf{Síntesis lógica} con \textbf{Yosys} — traduce el Verilog a
+          celdas genéricas y reporta el número de puertas, flip-flops y
+          bits de señal para cada $W$.
+\end{enumerate}
+
+\begin{ripes}
+    \textbf{Configuración del entorno (carpeta \texttt{hw/}):}
+\begin{lstlisting}[language=bash, numbers=none]
+# Instalar Yosys (una sola vez)
+sudo apt install yosys
+
+# Verificar el Verilog con simulacion funcional
+make sim
+
+# Sintetizar para W = 1, 2, 4, 8, 16 y guardar resultados
+make synth
+
+# Flujo completo
+make all
+\end{lstlisting}
+
+\end{ripes}
+
+\vspace{0.3cm}
+
+Cada vía adicional agrega hardware:
+comparadores de tag en paralelo, un MUX más ancho para
+seleccionar el dato, y más bits de estado para LRU.
+Este overhead no es gratuito: ocupa área y aumenta el hit time.
+\newpage
+\begin{referencia}
+    \textbf{Fórmulas de recursos de hardware.}
+    Sea: capacidad total $C$, bloque $B$~bytes, $W$ vías, dirección $A$~bits.
+    \begin{align*}
+        S &= \frac{C}{B \times W}
+        & \text{(número de sets)} \\[4pt]
+        b &= \log_2 B,\quad s = \log_2 S,\quad t = A - s - b
+        & \text{(campos de la dirección)} \\[4pt]
+        \text{Bits de datos} &= C \times 8
+        & \text{(fijo, independiente de } W\text{)} \\[4pt]
+        \text{Bits de tag+valid} &= \frac{C}{B} \times (1 + t)
+        & \text{(} C/B \text{ líneas en total)} \\[4pt]
+        \text{Comparadores} &= W \text{ comparadores de } t \text{ bits c/u}
+        & \text{(operan en paralelo por set)} \\[4pt]
+        \text{Bits de LRU (PLRU)} &= S \times (W - 1)
+        & \text{(árbol pseudo-LRU)} \\[4pt]
+        \text{MUX de vía} &= W\text{:}1 \text{ sobre } B\times 8 \text{ bits}
+        & \text{(selecciona la vía ganadora)}
+    \end{align*}
+
+\end{referencia}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\ejerciciosec{Simulación funcional: verificar la lógica de hit}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{ejercicio}
+    \textbf{Paso 1 — Ejecutar la simulación funcional.}
+\begin{lstlisting}[language=bash, numbers=none]
+cd hw/ && make sim
+\end{lstlisting}
+    Deben aparecer 5 líneas ``\texttt{PASS}''. Si alguna falla, indica un bug
+    en el diseño o en el testbench.
+
+    \textbf{Paso 2 — Agregar un caso de prueba propio.} \newline
+    Editar \archivo{tb\_cache.v} y agregar un test~6 donde ambas vías
+    tienen el valid bit en 1 pero solo una tiene el tag correcto.
+    ¿Cuál es el resultado esperado de \texttt{hit} y \texttt{data\_out}?
+
+    \textbf{Paso 3 — Leer el módulo Verilog.}
+    Abrir \archivo{hw/cache\_comparator.v}, identificarl el bloque \texttt{generate...endgenerate}:\newpage ¿cuántas instancias
+              del módulo tag\_compare se crean para W=4?
+
+
+
+\end{ejercicio}
+\newpage
+% ─────────────────────────────────────────────────────────────────────────────
+\ejerciciosec{Síntesis con Yosys: contar celdas por valor de W}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{ejercicio}
+    \textbf{Paso 1 — Ejecutar la síntesis.}
+\begin{lstlisting}[language=bash, numbers=none]
+cd hw/ && make synth
+\end{lstlisting}
+    El script \archivo{run\_sweep.sh} sintetiza \archivo{cache\_top.v} (comparador
+    + PLRU) para $W \in \{1, 2, 4, 8, 16\}$ y guarda \archivo{synth\_results.csv}.
+
+    \textbf{Paso 2 — Inspeccionar un log de síntesis y completar:}
+
+    Yosys reporta el número de celdas por tipo (\texttt{\$\_AND\_},
+    \texttt{\$\_XOR\_}, \texttt{\$\_MUX\_}, etc.).
+    Completar la tabla con los valores del CSV:
+
+    \begin{center}
+    \renewcommand{\arraystretch}{1.9}
+    \begin{tabular}{|l|c|c|c|c|c|}
+        \hline
+        \textbf{Configuración} & $W$ & \textbf{Celdas comb.} &
+        \textbf{FFs} & \textbf{Wire bits} & \textbf{Total celdas} \\
+        \hline
+        Direct-Mapped & 1  & & & & \\
+        \hline
+        2-Way         & 2  & & & & \\
+        \hline
+        4-Way         & 4  & & & & \\
+        \hline
+        8-Way         & 8  & & & & \\
+        \hline
+        Fully Assoc.  & 16 & & & & \\
+        \hline
+    \end{tabular}
+    \end{center}
+
+    \textbf{Paso 3 — Observar el tipo de celdas.}
+    En el log de síntesis, ¿qué tipo de celda domina para W grande?
+    
+\end{ejercicio}
+
+\end{document}

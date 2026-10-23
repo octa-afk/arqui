@@ -1,0 +1,3 @@
+[submodule "Ripes"]
+	path = Ripes
+	url = https://github.com/mortbopet/Ripes.git

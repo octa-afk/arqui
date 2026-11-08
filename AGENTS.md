@@ -4,14 +4,13 @@ Guía para agentes de IA. Leer antes de tocar archivos.
 
 ## Qué hay en esta carpeta
 
-- `teorico-practico/` — **fuentes originales**:
+- `humanos/` — **fuentes originales** (solo lectura), con la misma distribución que `agentes/`:
   - `teorico/` teóricos y resumen de caché (PDF)
-  - `practico/` prácticos (PDF), `practico/tomasulo/` planillas Tomasulo (xlsx/ods)
-  - `notas/` notas de Obsidian
-- `parciales_viejos/` — **fuentes originales** de parciales (PDF).
+  - `practico/` prácticos (PDF), `practico/tomasulo/` planillas Tomasulo (xlsx/ods), `practico/2026-cache_ripes_hardware-main-1/` taller de caché (RIPES)
+  - `parciales_viejos/` parciales (PDF)
+  - `recursos/` referencias y plantillas: Datapath - Greencard (Markdown) y Template - Tomasulo (ods)
 - `agentes/` — **versiones en Markdown** para agentes. Empezar por `agentes/INDEX.md`.
-  - Espejo: `agentes/teorico/`, `agentes/practico/` (incluido `tomasulo/`) y `agentes/parciales_viejos/` tienen el mismo nombre base que su fuente.
-  - `agentes/resumenes/`, `agentes/ejercicios/`: material derivado sin fuente directa. **Los ejercicios los generó un agente de IA**, no son material de la cátedra.
+  - Espejo: `agentes/teorico/`, `agentes/practico/` (incluido `tomasulo/`), `agentes/parciales_viejos/` y `agentes/recursos/` tienen el mismo nombre base que su fuente.
 - `.atl/` — configuración de herramientas, no es material de estudio.
 
 ## Reglas

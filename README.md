@@ -1,32 +1,31 @@
 # arqui — material de Arquitectura de Computadoras (FAMAF 2026)
 
-Carpeta con el material de la materia: teóricos, prácticos, parciales, notas y el taller de caché.
+Carpeta con el material de la materia: teóricos, prácticos, parciales, recursos y el taller de caché.
 
 ## Cómo está organizado
 
 | Carpeta | Qué es | Para qué |
 |---|---|---|
-| `teorico-practico/` | Fuentes originales (PDF, xlsx, ods, notas de Obsidian) | Material original. Solo lectura. |
-| `parciales_viejos/` | Parciales originales en PDF | Solo lectura. |
+| `humanos/teorico/` | Teóricos originales (PDF) | Solo lectura. |
+| `humanos/practico/` | Prácticos, planillas Tomasulo y taller de caché (PDF, xlsx, ods) | Solo lectura. |
+| `humanos/parciales_viejos/` | Parciales originales en PDF | Solo lectura. |
+| `humanos/recursos/` | Referencias y plantillas (Datapath Greencard en Markdown, plantilla Tomasulo en ods) | Espejo en `agentes/recursos/`. |
 | `agentes/` | Versiones en Markdown de las fuentes, para agentes de IA | Lectura por agentes. Empezar por `agentes/INDEX.md`. |
-| `agentes/resumenes/` y `agentes/ejercicios/` | Material derivado, no es de la cátedra | Ver aviso abajo. |
 | `.atl/` | Configuración de herramientas | No es material de estudio. |
 
-La regla es simple: cada archivo de `teorico-practico/` o `parciales_viejos/` tiene su equivalente en `agentes/`, con el mismo nombre base y en la carpeta espejo.
+La regla es simple: cada archivo de `humanos/teorico/`, `humanos/practico/`, `humanos/parciales_viejos/` y `humanos/recursos/` tienen su equivalente en `agentes/`, con el mismo nombre base y en la carpeta espejo. Excepción: el taller de RIPES (`humanos/practico/2026-cache_ripes_hardware-main-1/`), que no tiene espejo.
 
 ## Aviso importante
 
-- **`agentes/ejercicios/` fue generado por un agente de IA**, no es material de la cátedra. Verificar cualquier dato contra el PDF original antes de usarlo.
-- **`agentes/resumenes/resumen_parcial2_completo.md`** es un resumen hecho a partir de teóricos y parciales. Lo marcado **[ext]** no está en los apuntes.
 - Las conversiones a Markdown se hicieron a mano o con IA. Si un dato es crítico, contrastarlo con el PDF.
 
 ## Dónde buscar
 
-- **Teóricos y prácticos:** `teorico-practico/teorico/` y `teorico-practico/practico/`.
-- **Parciales:** `parciales_viejos/`.
-- **Tomasulo (planillas):** `teorico-practico/practico/tomasulo/`.
-- **Notas propias:** `teorico-practico/notas/`.
-- **Taller de caché con RIPES:** `teorico-practico/practico/2026-cache_ripes_hardware-main-1/`.
+- **Teóricos y prácticos:** `humanos/teorico/` y `humanos/practico/`.
+- **Parciales:** `humanos/parciales_viejos/`.
+- **Tomasulo (planillas):** `humanos/practico/tomasulo/`.
+- **Referencias y plantillas:** `humanos/recursos/`.
+- **Taller de caché con RIPES:** `humanos/practico/2026-cache_ripes_hardware-main-1/`.
 
 El índice completo de qué Markdown corresponde a qué fuente está en `agentes/INDEX.md`.
 

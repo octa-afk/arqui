@@ -6,7 +6,7 @@ Guía para agentes de IA. Leer antes de tocar archivos.
 
 - `humanos/` — **fuentes originales** (solo lectura), con la misma distribución que `agentes/`:
   - `teorico/` teóricos y resumen de caché (PDF)
-  - `practico/` prácticos (PDF), `practico/tomasulo/` planillas Tomasulo (xlsx/ods), `practico/2026-cache_ripes_hardware-main-1/` taller de caché (RIPES)
+  - `practico/` prácticos (PDF), `practico/tomasulo/` planillas Tomasulo (xlsx/ods),
   - `parciales_viejos/` parciales (PDF)
   - `recursos/` referencias y plantillas: Datapath - Greencard (Markdown) y Template - Tomasulo (ods)
 - `agentes/` — **versiones en Markdown** para agentes. Empezar por `agentes/INDEX.md`.

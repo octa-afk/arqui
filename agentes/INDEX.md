@@ -59,13 +59,7 @@ Rutas relativas a `arqui/`. Cada fila: versión Markdown ↔ fuente original.
 | `Datapath - Greencard.md` | `humanos/recursos/Datapath - Greencard.md` | Ya es Markdown; copia idéntica. Registro vs memoria, instrucciones (LEGv8). |
 | `Template - Tomasulo.md` | `humanos/recursos/Template - Tomasulo.ods` | Plantilla vacía de Tomasulo. |
 
-## Taller de caché (sin espejo)
-
-| Fuente | Qué es |
-|---|---|
-| `humanos/practico/2026-cache_ripes_hardware-main-1/…/README.md` | Taller de caché con RIPES (repo copiado, incluye submódulo de referencia). |
 
 ## Pendiente
 
 - Todas las fuentes PDF/xlsx/ods de `humanos/` y `humanos/parciales_viejos/` tienen su Markdown.
-- El taller de RIPES (`2026-cache_ripes_hardware-main-1/`) tiene doble nivel de carpeta; sin decidir si se aplana.

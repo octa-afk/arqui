@@ -1,6 +1,6 @@
 # Resumen: tamaño total de una caché de mapeo directo
 
-> Fuente: `teorico-practico/teorico/resumen_cache_mapeo_directo.pdf` (resumen de estudio, FaMAF).
+> Fuente: `humanos/teorico/resumen_cache_mapeo_directo.pdf` (resumen de estudio, FaMAF).
 > **Corrección detectada**: el PDF dice que la respuesta es "≈ 22,9 KiB". Con sus propios números, 183 296 bits = 22 912 bytes = **22,375 KiB** (≈ 22,4 KiB). El resto del cálculo es correcto.
 
 ## 1. Idea central

@@ -1,6 +1,6 @@
 # Ejercicio 1 — Simulación Tomasulo (ciclo a ciclo)
 
-> Fuente: `teorico-practico/practico/tomasulo/Ej 1 - Tomasulo.xlsx`. Hojas: `Template` y `clk 1` a `clk 8`.
+> Fuente: `humanos/practico/tomasulo/Ej 1 - Tomasulo.xlsx`. Hojas: `Template` y `clk 1` a `clk 8`.
 > **Resolución incompleta**: la planilla termina en el clk 8 con `sub`, `mult`, `div` y `add` todavía en ejecución.
 > Las celdas se transcriben tal como aparecen en la hoja. El clk 8 tiene la tabla de estaciones de reserva corrida y su columna `Busy` es inconsistente; no usar esa tabla como fuente confiable.
 

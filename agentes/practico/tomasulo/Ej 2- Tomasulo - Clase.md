@@ -1,6 +1,6 @@
 # Ejercicio 2 — Tomasulo (clase), enunciado sin resolver
 
-> Fuente: `teorico-practico/practico/tomasulo/Ej 2- Tomasulo - Clase.xlsx`. Una sola hoja, `Template`.
+> Fuente: `humanos/practico/tomasulo/Ej 2- Tomasulo - Clase.xlsx`. Una sola hoja, `Template`.
 > La planilla tiene el programa y el hardware, pero **las tablas de ciclos y estaciones de reserva están vacías**: es el enunciado para resolver en clase.
 
 ## Programa
